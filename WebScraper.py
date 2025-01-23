@@ -1,8 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-chromedriver_path = "/usr/bin/chromedriver"  # Update if the path is different
-chrome_binary_path = "/usr/bin/google-chrome"  # Replace with your actual Chrome path
+chromedriver_path = "/usr/bin/chromedriver"  
+chrome_binary_path = "/usr/bin/google-chrome"  
 
 options = webdriver.ChromeOptions()
 options.binary_location = chrome_binary_path
