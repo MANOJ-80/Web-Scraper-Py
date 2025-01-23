@@ -1,13 +1,32 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+import requests
+from bs4 import BeautifulSoup
 
-chromedriver_path = "/usr/bin/chromedriver"  
-chrome_binary_path = "/usr/bin/google-chrome"  
+def scrape_books():
+    base_url = "http://books.toscrape.com/"
+    books = []
 
-options = webdriver.ChromeOptions()
-options.binary_location = chrome_binary_path
+    try:
+        response = requests.get(base_url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        book_containers = soup.find_all('article', class_='product_pod')
 
-driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
-driver.get("https://example.com")
-print(driver.page_source)
-driver.quit()
+        for book in book_containers:
+            title = book.h3.a['title']
+            price = book.find('p', class_='price_color').text
+            availability = book.find('p', class_='instock availability').text.strip()
+
+            books.append({
+                'title': title,
+                'price': price,
+                'availability': availability
+            })
+
+        print(f"Scraped {len(books)} books from {base_url}:\n")
+        for i, book in enumerate(books, 1):
+            print(f"{i}. {book['title']} - {book['price']} ({book['availability']})")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch the webpage: {e}")
+
+scrape_books()
